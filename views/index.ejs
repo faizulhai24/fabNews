@@ -22,6 +22,7 @@
                 <div ng-repeat="post in posts | orderBy: '-upvotes'">
                     <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpVotes(post)"></span>
                     {{post.upvotes}}
+                    <span class="glyphicon glyphicon-thumbs-down" ng-click="decrementUpVotes(post)"></span>
                     <span style="font-size:20px; margin-left:10px;">
                         <a ng-show="post.link" target='_blank' href="{{post.link}}">
                             {{post.title}}
@@ -60,8 +61,11 @@
 
               <div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
                 <span class="glyphicon glyphicon-thumbs-up"
-                  ng-click="incrementUpvotes(comment)"></span>
-                {{comment.upvotes}} - by {{comment.author}}
+                  ng-click="incrementCommentUpVotes(post,comment)"></span>
+                {{comment.upvotes}}
+                <span class="glyphicon glyphicon-thumbs-down"
+                  ng-click="decrementCommentUpVotes(post,comment)"></span>
+                 - by {{comment.author}}
                 <span style="font-size:20px; margin-left:10px;">
                   {{comment.body}}
                 </span>

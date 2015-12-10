@@ -6,34 +6,54 @@ app.factory('posts', ['$http', function($http){
   };
 
   o.getAll = function() {
-    return $http.get('/posts').success(function(data){
-      angular.copy(data, o.posts);
-    });
-  };
+    	return $http.get('/posts').success(function(data){
+      		angular.copy(data, o.posts);
+    	});
+ 	 };
 
   o.create = function(post) {
-  return $http.post('/posts', post).success(function(data){
-    	o.posts.push(data);
-  	});
+  		return $http.post('/posts', post).success(function(data){
+    		o.posts.push(data);
+  		});
 	};
 
 	o.upvote = function(post) {
-  return $http.put('/posts/' + post._id + '/upvote')
-    .success(function(data){
-      post.upvotes += 1;
-    });
+  		return $http.put('/posts/' + post._id + '/upvote').success(function(data){
+      		post.upvotes += 1;
+    	});
+	};
+
+	o.downvote = function(post) {
+		console.log("Downvoting post");
+  		return $http.put('/posts/' + post._id + '/downvote').success(function(data){
+      		post.upvotes -= 1;
+    	});
+	};
+
+	o.commentUpvote = function(post,comment) {
+  		return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote').success(function(data){
+      		comment.upvotes += 1;
+    	});
+	};
+
+	o.commentDownvote = function(post,comment) {
+  		return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/downvote').success(function(data){
+      		comment.upvotes -= 1;
+    	});
+	};
 
     o.get = function(id) {
-    	console.log(id);
-  return $http.get('/posts/' + id).then(function(res){
-    return res.data;
-  });
-};
+    	console.log("Getting a post");
+		return $http.get('/posts/' + id).then(function(res){
+   			return res.data;
+		});
+	};
 
-};
-
-  return o;
-}]);
+	o.addComment = function(id, comment) {
+  		return $http.post('/posts/' + id + '/comments', comment)
+	};
+  	return o;
+}])
 
 
 app.config(['$stateProvider','$urlRouterProvider', function($stateProvider, $urlRouterProvider){
@@ -54,8 +74,7 @@ app.config(['$stateProvider','$urlRouterProvider', function($stateProvider, $url
 			  controller: 'PostsCtrl',
 			  resolve: {
 			    post: ['$stateParams', 'posts', function($stateParams, posts) {
-
-			      return posts.get($stateParams.id);
+			      	return posts.get($stateParams.id);
 			    }]
 			  }
 		});
@@ -82,19 +101,34 @@ app.controller('MainCtrl', ['$scope', 'posts', function($scope, posts){
 	$scope.incrementUpVotes = function(post){
 		posts.upvote(post);
 	};
+
+	$scope.decrementUpVotes = function(post){
+		posts.downvote(post);
+	};
 }]);
 
-app.controller('PostsCtrl', ['$scope','post','posts',function($scope, post, posts){
+app.controller('PostsCtrl', ['$scope','posts','post',function($scope, posts, post){
 	$scope.post = post;
 
 	$scope.addComment = function(){
 	  if($scope.body === '') { return; }
-	  $scope.post.comments.push({
+	  posts.addComment(post._id, {
 	    body: $scope.body,
 	    author: 'user',
-	    upvotes: 0
+	  }).success(function(comment){
+	  	$scope.post.comments.push(comment);
 	  });
 	  $scope.body = '';
+	};
+
+	$scope.incrementCommentUpVotes = function(post,comment){
+		console.log("Hit it");
+		posts.commentUpvote(post,comment);
+	};
+
+	$scope.decrementCommentUpVotes = function(post,comment){
+		console.log("Hit it2");
+		posts.commentDownvote(post,comment);
 	};
 }]);
 
