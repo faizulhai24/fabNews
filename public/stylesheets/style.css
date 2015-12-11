@@ -1,8 +1,27 @@
 body {
-  padding: 50px;
+  background-color: FFFFFF;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+.glyphicon-thumbs-up{ 
+	cursor:pointer;
+}
+
+.glyphicon-thumbs-down{ 
+	cursor:pointer;
+}
+
+.glyphicon-remove{ 
+	cursor:pointer;
+}
+
+blockquote {
+    padding: 0px 0px;
+    margin: 0 0 20px;
+    font-size: 17.5px;
+    border-left: 0px;
 }
