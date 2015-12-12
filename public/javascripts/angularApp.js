@@ -20,7 +20,7 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
 
 	o.delete = function(post) {
 		console.log(auth.getToken());
-  		return $http.delete('/posts/' + post._id + '/delete', null,  {
+  		return $http.post('/posts/' + post._id + '/delete', post,  {
     	headers: {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
     		angular.copy(data, o.posts);
   		});
@@ -71,7 +71,7 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
 
   	o.deleteComment = function(post,comment) {
   		console.log(auth.getToken());
-  		return $http.delete('/posts/' + post._id + '/comments/' + comment._id + '/delete', null,  {
+  		return $http.post('/posts/' + post._id + '/comments/' + comment._id + '/delete', {'post':post, "comment":comment},  {
     	headers: {Authorization: 'Bearer '+auth.getToken()}
     	});
 	};

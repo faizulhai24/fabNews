@@ -56,19 +56,25 @@ router.param('comment', function(req, res, next, id) {
   });
 });
 
-router.delete('/posts/:post/delete', function(req,res,next){
+router.post('/posts/:post/delete', auth, function(req,res,next){
 
-  req.post.remove(function(err,post){
-    if(!err){
-        Post.find(function(err,posts){
-        if(err){return next(err);}
-        res.json(posts);
-  });
-       }
-    })
+  if(req.post.author === req.payload.username)
+  {
+        req.post.remove(function(err,post){
+        if(!err){
+            Post.find(function(err,posts){
+            if(err){return next(err);}
+            res.json(posts);
+            });
+          }
+        })
+  } else {
+    return res.status(401).json({message: "Lol! I've added a check in the backend too"});
+  }
+
 })
 
-router.delete('/posts/:post/comments/:comment/delete' ,function(req,res,next){
+router.post('/posts/:post/comments/:comment/delete', auth, function(req,res,next){
 
   req.comment.remove(function(err){
     if(!err){
