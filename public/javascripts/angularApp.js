@@ -19,10 +19,10 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
 	};
 
 	o.delete = function(post) {
-		console.log(post);
+		console.log(auth.getToken());
   		return $http.delete('/posts/' + post._id + '/delete', null,  {
     	headers: {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
-    		o.posts.pop();
+    		angular.copy(data, o.posts);
   		});
 	};
 
@@ -70,9 +70,9 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
   	
 
   	o.deleteComment = function(post,comment) {
+  		console.log(auth.getToken());
   		return $http.delete('/posts/' + post._id + '/comments/' + comment._id + '/delete', null,  {
-    headers: {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
-    		post.comments.pop(comment);
+    	headers: {Authorization: 'Bearer '+auth.getToken()}
     	});
 	};
 
@@ -147,7 +147,6 @@ app.controller('MainCtrl', ['$scope', 'posts', 'auth', function($scope, posts, a
 	};
 
 	$scope.deletePost = function(post){
-		console.log(post);
 		posts.delete(post);
 	};
 
@@ -158,6 +157,11 @@ app.controller('MainCtrl', ['$scope', 'posts', 'auth', function($scope, posts, a
 	$scope.decrementUpVotes = function(post){
 		posts.downvote(post);
 	};
+
+	$scope.showDeletePost = function(post){
+		return (auth.currentUser() === post.author);
+	};
+
 }]);
 
 app.controller('PostsCtrl', ['$scope','posts','post','auth', function($scope, posts, post, auth){
@@ -176,7 +180,10 @@ app.controller('PostsCtrl', ['$scope','posts','post','auth', function($scope, po
 	};
 
 	$scope.deleteComment = function(post,comment){
-		posts.deleteComment(post,comment);
+		posts.deleteComment(post,comment).success(function(data){
+			console.log(data);
+			$scope.post = data;
+		});
 	};
 
 	$scope.incrementCommentUpVotes = function(post,comment){
@@ -186,6 +193,12 @@ app.controller('PostsCtrl', ['$scope','posts','post','auth', function($scope, po
 	$scope.decrementCommentUpVotes = function(post,comment){
 		posts.commentDownvote(post,comment);
 	};
+
+	$scope.showDeleteComment = function(post,comment){
+		return (auth.currentUser() === post.author || auth.currentUser() === comment.author);
+	};
+
+	
 }]);
 
 app.controller('AuthCtrl', ['$scope', '$state', 'auth', function($scope, $state, auth){

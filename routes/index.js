@@ -56,23 +56,30 @@ router.param('comment', function(req, res, next, id) {
   });
 });
 
-router.delete('/posts/:post/delete' , function(req,res,next){
+router.delete('/posts/:post/delete', function(req,res,next){
+
   req.post.remove(function(err,post){
     if(!err){
-          return res.status(200).json({message:"Post deleted successfully."});
+        Post.find(function(err,posts){
+        if(err){return next(err);}
+        res.json(posts);
+  });
        }
     })
 })
 
-router.delete('/posts/:post/comments/:comment/delete' , function(req,res,next){
+router.delete('/posts/:post/comments/:comment/delete' ,function(req,res,next){
+
   req.comment.remove(function(err){
     if(!err){
-          req.post.comments.pop(req.comment);
-          req.post.save(function(err, post) {
-              if(err){ return next(err);}
-              return res.status(200).json(post);
-            
-          })
+          //req.post.comments.pop(req.comment);
+          //req.post.save(function(err, post) {
+              //if(err){ return next(err);}
+              req.post.populate('comments', function(err, post) {
+                if (err) { return next(err); }
+
+                res.json(post);
+              });
        }
     })
 })
