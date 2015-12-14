@@ -27,17 +27,16 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
 	};
 
 	o.upvote = function(post) {
+		post.upvotes += 1;
   		return $http.put('/posts/' + post._id + '/upvote', null,  {
     headers: {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
-      		post.upvotes += 1;
-    	});
+      	});
 	};
 
 	o.downvote = function(post) {
-		console.log("Downvoting post");
-  		return $http.put('/posts/' + post._id + '/downvote', null,  {
+		post.upvotes -= 1;
+		return $http.put('/posts/' + post._id + '/downvote', null,  {
     headers: {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
-      		post.upvotes -= 1;
     	});
 	};
 
