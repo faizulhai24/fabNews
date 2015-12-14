@@ -41,16 +41,16 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
 	};
 
 	o.commentUpvote = function(post,comment) {
+		comment.upvotes += 1;
   		return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote', null,  {
     headers: {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
-      		comment.upvotes += 1;
     	});
 	};
 
 	o.commentDownvote = function(post,comment) {
+		comment.upvotes -= 1;
   		return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/downvote', null,  {
     headers: {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
-      		comment.upvotes -= 1;
     	});
 	};
 
