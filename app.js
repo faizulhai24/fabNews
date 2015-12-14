@@ -32,7 +32,7 @@ app.use(passport.initialize());
 app.use('/', routes);
 app.use('/users', users);
 
-mongoose.connect('mongodb://faizulhai24:q1w2e3r4@ds029595.mongolab.com:29595/fapnews');
+mongoose.connect('mongodb://faiz:q1w2e3r4@ds029595.mongolab.com:29595/fapnews');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
